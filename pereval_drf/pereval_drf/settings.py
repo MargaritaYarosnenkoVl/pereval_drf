@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'pereval.apps.PerevalConfig',
+    'hiker.apps.HikerConfig',
 ]
 
 MIDDLEWARE = [
