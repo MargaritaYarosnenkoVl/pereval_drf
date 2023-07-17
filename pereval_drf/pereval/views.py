@@ -6,7 +6,7 @@ from .models import Pereval
 from .serializers import PerevalSerializer
 
 
-class PerevalViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, GenericViewSet):
+class PerevalViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.UpdateModelMixin, GenericViewSet):
     queryset = Pereval.objects.all()
     serializer_class = PerevalSerializer
 
