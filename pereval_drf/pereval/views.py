@@ -1,3 +1,4 @@
+from django.http import JsonResponse
 from rest_framework import viewsets, status, mixins
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
@@ -6,7 +7,11 @@ from .models import Pereval
 from .serializers import PerevalSerializer
 
 
-class PerevalViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.UpdateModelMixin, mixins.RetrieveModelMixin, GenericViewSet):
+class PerevalViewSet(mixins.CreateModelMixin,
+                     mixins.ListModelMixin,
+                     mixins.UpdateModelMixin,
+                     mixins.RetrieveModelMixin,
+                     GenericViewSet):
     queryset = Pereval.objects.all()
     serializer_class = PerevalSerializer
 
@@ -35,6 +40,25 @@ class PerevalViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.Upda
                 'id': None,
             })
 
-
-
+    """Изменение объекта перевала id (кроме полей с данными пользователя)"""
+    def partial_update(self, request, *args, **kwargs):
+        pereval = self.get_object()
+        if pereval.status == 'new':
+            serializer = PerevalSerializer(pereval, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response({
+                    'state': '1',
+                    'message': 'Запись успешно изменена'
+                })
+            else:
+                return Response({
+                    'state': '0',
+                    'message': serializer.errors
+                })
+        else:
+            return Response({
+                'state': '0',
+                'message': f"Не удалось обновить запись: {pereval.get_status_display()}"
+            })
 
