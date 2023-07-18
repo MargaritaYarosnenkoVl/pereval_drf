@@ -1,5 +1,5 @@
 from django.http import JsonResponse
-from rest_framework import viewsets, status, mixins
+from rest_framework import viewsets, status, mixins, generics
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
@@ -62,3 +62,17 @@ class PerevalViewSet(mixins.CreateModelMixin,
                 'message': f"Не удалось обновить запись: {pereval.get_status_display()}"
             })
 
+
+"""GET запрос для вывода всех записей по email пользователя"""
+class EmailAPIView(generics.ListAPIView):
+    serializer_class = PerevalSerializer
+
+    def get(self, request, *args, **kwargs):
+        email = kwargs.get('email', None)
+        if Pereval.objects.filter(user__email=email):
+            data = PerevalSerializer(Pereval.objects.filter(user__email=email), many=True).data
+        else:
+            data = {
+                'message': f'Not exist email = {email}'
+            }
+        return JsonResponse(data, safe=False)

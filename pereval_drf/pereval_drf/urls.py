@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
 
-from pereval.views import PerevalViewSet
+from pereval.views import PerevalViewSet, EmailAPIView
 
 router = routers.DefaultRouter()
 router.register(r'pereval', PerevalViewSet)
@@ -28,4 +28,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
     path('api/v1/submitData/', include(router.urls)),
+    path('api/v1/submitData/user__email=<str:email>', EmailAPIView.as_view()),
 ]
