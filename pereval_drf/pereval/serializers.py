@@ -4,7 +4,7 @@ from rest_framework import serializers
 from hiker.models import Hiker
 from hiker.serializers import HikerSerializer
 from .models import Coords, Level, Pereval, Images
-
+from drf_writable_nested import WritableNestedModelSerializer
 
 class CoordsSerializer(serializers.ModelSerializer):
     class Meta:
@@ -30,7 +30,7 @@ class ImagesSerializer(serializers.ModelSerializer):
 
 
 """Общий сериалайзер для вывода пользователю"""
-class PerevalSerializer(serializers.ModelSerializer):
+class PerevalSerializer(WritableNestedModelSerializer):
     user = HikerSerializer()
     coords = CoordsSerializer()
     level = LevelSerializer(allow_null=True)
@@ -39,7 +39,7 @@ class PerevalSerializer(serializers.ModelSerializer):
     class Meta:
         model = Pereval
         fields = (
-             'id', 'beauty_title', 'title', 'other_titles', 'connect', 'add_time', 'user', 'coords', 'level', 'images')
+             'id', 'beauty_title', 'title', 'other_titles', 'connect', 'add_time', 'user', 'coords', 'level', 'images', 'status')
 
     """Сохранение данных о перевале, полученных от пользователя"""
     def create(self, validated_data, **kwargs):
@@ -65,4 +65,20 @@ class PerevalSerializer(serializers.ModelSerializer):
             title = image.pop('title')
             Images.objects.create(data=data, pereval=pereval, title=title)
         return pereval
+
+    """Сохранение данных о перевале, измененных пользователем"""
+    def validate(self, data):
+        if self.instance is not None:
+            instance_user = self.instance.user
+            data_user = data.get('user')
+            validating_user_fields = [
+                instance_user.fam != data_user['fam'],
+                instance_user.name != data_user['name'],
+                instance_user.otc != data_user['otc'],
+                instance_user.phone != data_user['phone'],
+                instance_user.email != data_user['email'],
+            ]
+            if data_user is not None and any(validating_user_fields):
+                raise serializers.ValidationError({'Не удалось обновить запись': 'Нельзя изменять данные пользователя'})
+        return data
 
