@@ -17,8 +17,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
-
 from pereval.views import PerevalViewSet, EmailAPIView
+from .yasg import urlpatterns as doc_urls
 
 router = routers.DefaultRouter()
 router.register(r'pereval', PerevalViewSet)
@@ -30,3 +30,5 @@ urlpatterns = [
     path('api/v1/submitData/', include(router.urls)),
     path('api/v1/submitData/user__email=<str:email>', EmailAPIView.as_view()),
 ]
+
+urlpatterns += doc_urls

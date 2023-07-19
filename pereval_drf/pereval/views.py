@@ -1,5 +1,5 @@
 from django.http import JsonResponse
-from rest_framework import viewsets, status, mixins, generics
+from rest_framework import  status, mixins, generics
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
@@ -9,7 +9,6 @@ from .serializers import PerevalSerializer
 
 class PerevalViewSet(mixins.CreateModelMixin,
                      mixins.ListModelMixin,
-                     mixins.UpdateModelMixin,
                      mixins.RetrieveModelMixin,
                      GenericViewSet):
     queryset = Pereval.objects.all()
@@ -41,6 +40,7 @@ class PerevalViewSet(mixins.CreateModelMixin,
             })
 
     """Изменение объекта перевала id (кроме полей с данными пользователя)"""
+
     def partial_update(self, request, *args, **kwargs):
         pereval = self.get_object()
         if pereval.status == 'new':
@@ -76,3 +76,6 @@ class EmailAPIView(generics.ListAPIView):
                 'message': f'Not exist email = {email}'
             }
         return JsonResponse(data, safe=False)
+
+
+
