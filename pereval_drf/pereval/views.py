@@ -40,7 +40,6 @@ class PerevalViewSet(mixins.CreateModelMixin,
             })
 
     """Изменение объекта перевала id (кроме полей с данными пользователя)"""
-
     def partial_update(self, request, *args, **kwargs):
         pereval = self.get_object()
         if pereval.status == 'new':
@@ -73,7 +72,7 @@ class EmailAPIView(generics.ListAPIView):
             data = PerevalSerializer(Pereval.objects.filter(user__email=email), many=True).data
         else:
             data = {
-                'message': f'Not exist email = {email}'
+                'message': f'Not exist email hjh{email}'
             }
         return JsonResponse(data, safe=False)
 

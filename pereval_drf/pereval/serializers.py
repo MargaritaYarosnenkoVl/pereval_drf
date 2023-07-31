@@ -21,7 +21,7 @@ class LevelSerializer(serializers.ModelSerializer):
 
 
 class ImagesSerializer(serializers.ModelSerializer):
-    data = serializers.URLField()
+    data = serializers.URLField(default='https://example.jpg')
 
     class Meta:
         model = Images
@@ -39,7 +39,7 @@ class PerevalSerializer(WritableNestedModelSerializer):
     class Meta:
         model = Pereval
         fields = (
-             'id', 'beauty_title', 'title', 'other_titles', 'connect', 'add_time', 'user', 'coords', 'level', 'images', 'status')
+             'id', 'beauty_title', 'title', 'other_titles', 'connect', 'user', 'coords', 'level', 'images', 'status')
 
     """Сохранение данных о перевале, полученных от пользователя"""
     def create(self, validated_data, **kwargs):
@@ -58,7 +58,7 @@ class PerevalSerializer(WritableNestedModelSerializer):
 
         coords = Coords.objects.create(**coords)
         level = Level.objects.create(**level)
-        pereval = Pereval.objects.create(**validated_data, user=user, coords=coords, level=level, status='new')
+        pereval = Pereval.objects.create(**validated_data, user=user, coords=coords, level=level)
 
         for image in images:
             data = image.pop('data')
